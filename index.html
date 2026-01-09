@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MERCADO DE FICHAS | Campana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-panel: #1e293b;
+            --primary: #2563eb;
+            --accent: #fbbf24;
+            --hot: #ef4444; 
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --tile-radius: 8px; /* Radio más pequeño para grilla densa */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-color: #000;
+        }
+
+        /* --- FONDO NÍTIDO --- */
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background-position: center center; background-size: cover;
+            transition: background-image 1.5s ease-in-out;
+            filter: brightness(0.5); /* Oscuro para resaltar los colores neon */
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: rgba(0,0,0,0.85); padding: 10px;
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .datetime-widget {
+            font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--accent);
+            font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            background: rgba(255,255,255,0.05); padding: 2px 10px; border-radius: 20px;
+            display: inline-block; margin-bottom: 2px;
+        }
+
+        .main-title {
+            font-family: 'Montserrat', sans-serif; font-size: 1.6rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+
+        /* --- TICKER --- */
+        .ticker-wrap {
+            width: 100%; background: var(--hot); color: white; overflow: hidden; height: 28px;
+            display: flex; align-items: center; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4);
+            position: relative; z-index: 90;
+        }
+        .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: ticker 30s linear infinite; }
+        .ticker-item { display: inline-block; padding: 0 2rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        /* --- GAME BOARD --- */
+        .game-container {
+            flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 2px;
+        }
+
+        .controls {
+            display: flex; gap: 10px; margin-bottom: 10px;
+            background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .btn-ctrl {
+            background: transparent; border: none; color: #ccc; font-size: 0.75rem;
+            font-weight: 700; padding: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+        }
+        .btn-ctrl:hover { color: #fff; }
+
+        /* GRILLA DENSA */
+        #puzzle-board { position: relative; transition: all 0.3s ease; margin: 0 auto; }
+
+        .tile {
+            position: absolute;
+            background-color: var(--bg-panel);
+            border-radius: var(--tile-radius);
+            cursor: pointer; overflow: hidden;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote suave */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex; flex-direction: column;
+        }
+
+        /* Efecto al presionar (Active) */
+        .tile:active { transform: scale(0.9); transition: transform 0.05s; }
+
+        .tile-hot { border: 1px solid var(--hot); }
+        .tile-hot::after {
+            content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
+            box-shadow: inset 0 0 8px rgba(220, 38, 38, 0.6);
+            animation: pulseRed 2s infinite; pointer-events: none;
+        }
+        @keyframes pulseRed { 0% { opacity: 0.4; } 50% { opacity: 0.9; } 100% { opacity: 0.4; } }
+
+        .tile-img { width: 100%; height: 60%; object-fit: cover; filter: brightness(0.95); }
+        .tile-content {
+            height: 40%; padding: 2px 3px; background: #0f172a;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        
+        /* Tipografía Micro para 8 columnas */
+        .tile-cat { font-size: 0.4rem; color: var(--text-gray); text-transform: uppercase; display: flex; justify-content: space-between; }
+        .tile-title { font-weight: 700; font-size: 0.5rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 1px 0;}
+        .tile-offer { color: var(--accent); font-size: 0.45rem; font-weight: 700; white-space: nowrap;}
+        .tile-hot .tile-offer { color: #fca5a5; }
+
+        /* --- Footer Ad --- */
+        .ad-banner {
+            background: #0f172a; border-top: 2px solid var(--accent); padding: 15px; text-align: center; z-index: 50;
+        }
+        .btn-ad {
+            background: var(--accent); color: #000; font-weight: 900; padding: 10px 20px;
+            border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-4px);} }
+
+        /* --- EFECTOS 3D & PARTICULAS --- */
+        .particle {
+            position: absolute; pointer-events: none; z-index: 9999;
+            animation: particleAnim 0.8s ease-out forwards;
+            font-size: 1.2rem; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+        }
+        @keyframes particleAnim {
+            0% { transform: translate(-50%, -50%) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot)); opacity: 0; }
+        }
+
+        .ripple {
+            position: absolute; border-radius: 50%; background: rgba(255,255,255,0.6);
+            transform: scale(0); animation: ripple 0.6s linear; pointer-events: none;
+        }
+        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-card {
+            background: #1e293b; width: 90%; max-width: 400px; border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; position: relative;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+
+    <header>
+        <div class="datetime-widget" id="datetime">CARGANDO...</div>
+        <div class="main-title">MERCADO DE FICHAS</div>
+    </header>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">🔥 SUPER PRECIOS CAMPANA</div>
+            <div class="ticker-item">🥩 EL TANO: ASADO $9000</div>
+            <div class="ticker-item">🎮 ZONE: PS5 JOYSTICK 20% OFF</div>
+            <div class="ticker-item">🍔 BURGER KING: COMBO $6500</div>
+            <div class="ticker-item">👠 MODA LILY: 2X1 ZAPATOS</div>
+            <div class="ticker-item">📱 IPHONE CASES: 3X2</div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="controls">
+            <button class="btn-ctrl" onclick="toggleAutoPlay()" id="btn-autoplay">
+                <i class="fas fa-play"></i> DEMO
+            </button>
+            <button class="btn-ctrl" onclick="resetGame()">
+                <i class="fas fa-sync"></i> RESET
+            </button>
+        </div>
+
+        <div id="particles-container" style="position:absolute; top:0; left:0; width:0; height:0;"></div>
+
+        <div id="puzzle-board">
+            </div>
+    </div>
+
+    <div class="ad-banner">
+        <h3 style="color: #fff; margin-bottom: 5px; font-size:1.1rem;">¿QUERÉS APARECER ACÁ?</h3>
+        <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 15px;">Únete a los 90+ comercios del tablero.</p>
+        <button class="btn-ad" onclick="openAdModal()">¡QUIERO MI FICHA!</button>
+    </div>
+
+    <div class="modal-overlay" id="shop-modal">
+        <div class="modal-card">
+            <img src="" id="m-img" style="width:100%; height:200px; object-fit:cover;">
+            <button onclick="closeModal('shop-modal')" style="position:absolute; top:10px; right:10px; border-radius:50%; width:30px; height:30px; border:none; background:rgba(0,0,0,0.6); color:white; font-size:1.2rem; cursor:pointer;">&times;</button>
+            <div style="padding:20px;">
+                <h2 id="m-title" style="color:var(--accent); font-family:'Montserrat'; margin-bottom:5px;">TITULO</h2>
+                <p id="m-desc" style="color:#e2e8f0; line-height:1.4; font-size:0.9rem; margin-bottom:20px;">Descripción...</p>
+                <button style="width:100%; padding:14px; background:#25D366; color:white; border:none; border-radius:8px; font-weight:900; cursor:pointer; font-size:1rem;" onclick="contactWA()">
+                    <i class="fab fa-whatsapp"></i> CONTACTAR AHORA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ad-modal">
+        <div class="modal-card" style="padding:30px; text-align:center;">
+            <div style="font-size:3.5rem; margin-bottom:15px; animation: float 3s infinite;">🚀</div>
+            <h2 style="color:white; margin-bottom:10px; text-transform: uppercase;">Expande tu Negocio</h2>
+            <p style="color:#ccc; margin-bottom:25px; font-size:0.9rem;">Sé parte de la red comercial más innovadora de la ciudad.</p>
+            
+            <button style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:1rem; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);" 
+                onclick="window.open('https://api.whatsapp.com/send?phone=+543489686939&text=%C2%A1%C2%A1Quiero%20m%C3%A1s%20Informaci%C3%B3n%20del%20mercado%20de%20fichas!!', '_blank')">
+                CONTACTAR VENTAS
+            </button>
+            
+            <button onclick="closeModal('ad-modal')" style="margin-top:15px; background:transparent; border:none; color:#666; cursor:pointer; font-size:0.85rem;">Cerrar</button>
+        </div>
+    </div>
+
+<script>
+    /* --- 1. CONFIGURACIÓN --- */
+    function updateTime() {
+        const now = new Date();
+        const options = { weekday: 'long', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('datetime').innerText = now.toLocaleDateString('es-AR', options).replace(',', ' |').toUpperCase();
+    }
+    setInterval(updateTime, 1000); updateTime();
+
+    // Fondos
+    const bgImages = [
+        'url("https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=90&w=2000&auto=format&fit=crop")',
+        'url("https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=90&w=2000&auto=format&fit=crop")',
+        'url("https://images.unsplash.com/photo-1509440159596-0249088772ff?q=90&w=2000&auto=format&fit=crop")', 
+        'url("https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=90&w=2000&auto=format&fit=crop")',
+        'url("https://images.unsplash.com/photo-1556740738-b6a63e27c4df?q=90&w=2000&auto=format&fit=crop")'
+    ];
+    let bgIndex = 0;
+    const bgEl = document.querySelector('.animated-bg');
+    bgEl.style.backgroundImage = bgImages[0];
+    setInterval(() => { bgIndex = (bgIndex + 1) % bgImages.length; bgEl.style.backgroundImage = bgImages[bgIndex]; }, 8000);
+
+    /* --- 2. LÓGICA MASIVA (8x12) --- */
+    const COLS = 8; // Aumentado a 8 columnas
+    const ROWS = 12; 
+    const GAP = 3; // Gap reducido para que entren
+    let CELL_SIZE;
+
+    const CATEGORIES = [
+        { n:'CARNE', i:'🥩', img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=200&q=80' },
+        { n:'TECH', i:'💻', img:'https://images.unsplash.com/photo-1592899677712-a1b4d070b4ba?w=200&q=80' },
+        { n:'MODA', i:'👗', img:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=200&q=80' },
+        { n:'FOOD', i:'🍔', img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&q=80' },
+        { n:'CASA', i:'🏠', img:'https://images.unsplash.com/photo-1581147036324-c17ac41dfa6c?w=200&q=80' },
+        { n:'FIT', i:'💪', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=200&q=80' },
+        { n:'CAFE', i:'☕', img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&q=80' },
+        { n:'PELO', i:'💇', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200&q=80' }
+    ];
+    const OFFERS = ["2x1", "50%", "SALE", "HOT", "$500", "NEW", "3x2", "-20%"];
+    
+    // Emojis para efectos
+    const FX_EMOJIS = ['💎', '⚡', '🔥', '🚀', '⭐', '💰', '🎉', '❤️'];
+
+    function generateTiles() {
+        let gen = [];
+        let id = 0;
+        
+        // Target central
+        gen.push({ id: 'target', w: 2, h: 2, x: 3, y: 0, title: "MEGAFERTA", cat: "🔥", img: "https://images.unsplash.com/photo-1511556820780-d612a4259b2c?w=400", offer: "70% OFF" });
+
+        let cx = 0, cy = 2;
+        // Generar ~90 fichas
+        for(let i=0; i < 94; i++) {
+            if(cy >= ROWS) break;
+
+            const c = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+            const off = OFFERS[Math.floor(Math.random() * OFFERS.length)];
+            const hot = Math.random() > 0.8;
+            
+            // Mayoría 1x1, muy pocos 2x1 para mantener orden en 8 columnas
+            let w = 1, h = 1;
+            if(Math.random() > 0.95 && cx < COLS-1) w = 2;
+
+            if(cx + w > COLS) { cx = 0; cy++; }
+            if(cy >= ROWS) break;
+
+            gen.push({
+                id: `t${id++}`, w: w, h: h, x: cx, y: cy,
+                title: `Local ${id}`, cat: c.n, icon: c.i, img: c.img,
+                offer: hot ? off + ' 🔥' : off
+            });
+            cx += w;
+            // Pocos huecos para alta densidad
+            if(Math.random() > 0.92) cx++; 
+        }
+        return gen;
+    }
+
+    let tiles = generateTiles();
+    const boardEl = document.getElementById('puzzle-board');
+
+    function init() {
+        calcMetrics();
+        render();
+        window.addEventListener('resize', () => { calcMetrics(); updatePos(); });
+    }
+
+    function calcMetrics() {
+        // En móviles usa el 98% del ancho, en desktop max 600px
+        const maxWidth = Math.min(window.innerWidth - 10, 600); 
+        CELL_SIZE = (maxWidth - (GAP * (COLS - 1))) / COLS;
+        boardEl.style.width = `${maxWidth}px`;
+        boardEl.style.height = `${(CELL_SIZE * ROWS) + (GAP * (ROWS - 1))}px`;
+    }
+
+    function render() {
+        boardEl.innerHTML = '';
+        tiles.forEach(t => {
+            const el = document.createElement('div');
+            const isHot = t.offer.includes('🔥');
+            el.className = `tile ${isHot ? 'tile-hot' : ''}`;
+            el.id = t.id;
+            el.style.width = `${t.w * CELL_SIZE + (t.w - 1) * GAP}px`;
+            el.style.height = `${t.h * CELL_SIZE + (t.h - 1) * GAP}px`;
+            
+            el.innerHTML = `
+                <img src="${t.img}" class="tile-img" loading="lazy">
+                <div class="tile-content">
+                    <div class="tile-cat"><span>${t.icon || ''}</span> <i class="fas fa-info-circle" style="font-size:0.6rem;" onclick="openShopModal('${t.id}', event)"></i></div>
+                    <div class="tile-title">${t.title}</div>
+                    <div class="tile-offer">${t.offer}</div>
+                </div>
+            `;
+            // Agregar efecto de ripple al click
+            el.onclick = (e) => {
+                if(!e.target.closest('.fa-info-circle')) {
+                    createRipple(e, el);
+                    tryMove(t, el);
+                }
+            };
+            boardEl.appendChild(el);
+        });
+        updatePos();
+    }
+
+    function updatePos() {
+        tiles.forEach(t => {
+            const el = document.getElementById(t.id);
+            if(el) el.style.transform = `translate3d(${t.x * (CELL_SIZE + GAP)}px, ${t.y * (CELL_SIZE + GAP)}px, 0)`;
+        });
+    }
+
+    /* --- 3. MOVIMIENTO & EFECTOS --- */
+    function getMatrix() {
+        let m = Array(ROWS).fill().map(() => Array(COLS).fill(null));
+        tiles.forEach(t => {
+            for(let i=0; i<t.w; i++) for(let j=0; j<t.h; j++) if(t.y+j < ROWS && t.x+i < COLS) m[t.y+j][t.x+i] = t.id;
+        });
+        return m;
+    }
+
+    function tryMove(t, el) {
+        if(isAutoPlaying) return;
+        const m = getMatrix();
+        const dirs = [{dx:0,dy:-1},{dx:0,dy:1},{dx:-1,dy:0},{dx:1,dy:0}];
+        
+        for (let d of dirs) {
+            if (canMove(t, d.dx, d.dy, m)) {
+                t.x += d.dx; t.y += d.dy;
+                updatePos();
+                spawnMicroEffects(el); // EFECTO CHINO
+                return;
+            }
+        }
+    }
+
+    function canMove(t, dx, dy, m) {
+        let nx = t.x + dx, ny = t.y + dy;
+        if (nx < 0 || ny < 0 || nx + t.w > COLS || ny + t.h > ROWS) return false;
+        for(let i=0; i<t.w; i++) for(let j=0; j<t.h; j++) {
+            let occ = m[ny+j][nx+i];
+            if (occ !== null && occ !== t.id) return false;
+        }
+        return true;
+    }
+
+    /* --- SISTEMA DE MICRO EFECTOS (Visuales Chinos) --- */
+    function spawnMicroEffects(element) {
+        const rect = element.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        
+        // 1. Sonido suave (opcional, visual only por ahora)
+        
+        // 2. Partículas explosivas
+        for(let i=0; i<12; i++) {
+            const p = document.createElement('div');
+            p.innerText = FX_EMOJIS[Math.floor(Math.random() * FX_EMOJIS.length)];
+            p.className = 'particle';
+            p.style.left = cx + 'px';
+            p.style.top = cy + 'px';
+            
+            // Física random
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 60 + Math.random() * 100;
+            const tx = Math.cos(angle) * velocity;
+            const ty = Math.sin(angle) * velocity;
+            const rot = Math.random() * 360;
+
+            p.style.setProperty('--tx', `${tx}px`);
+            p.style.setProperty('--ty', `${ty}px`);
+            p.style.setProperty('--rot', `${rot}deg`);
+
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        }
+    }
+
+    function createRipple(event, element) {
+        const circle = document.createElement("span");
+        const diameter = Math.max(element.clientWidth, element.clientHeight);
+        const radius = diameter / 2;
+        const rect = element.getBoundingClientRect();
+        
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${event.clientX - rect.left - radius}px`;
+        circle.style.top = `${event.clientY - rect.top - radius}px`;
+        circle.className = "ripple";
+
+        element.appendChild(circle);
+        setTimeout(() => circle.remove(), 600);
+    }
+
+    /* --- AUTO PLAY --- */
+    let isAutoPlaying = false;
+    let autoTimer;
+    function toggleAutoPlay() {
+        isAutoPlaying = !isAutoPlaying;
+        const btn = document.getElementById('btn-autoplay');
+        if(isAutoPlaying) {
+            btn.innerHTML = '<i class="fas fa-pause"></i> PAUSA';
+            autoTimer = setInterval(() => {
+                const t = tiles[Math.floor(Math.random()*tiles.length)];
+                const m = getMatrix();
+                const d = [{dx:0,dy:-1},{dx:0,dy:1},{dx:-1,dy:0},{dx:1,dy:0}].filter(dir => canMove(t,dir.dx,dir.dy,m));
+                if(d.length) {
+                    const move = d[Math.floor(Math.random()*d.length)];
+                    t.x += move.dx; t.y += move.dy;
+                    updatePos();
+                }
+            }, 100); // Velocidad insana para efecto visual
+        } else {
+            btn.innerHTML = '<i class="fas fa-play"></i> DEMO';
+            clearInterval(autoTimer);
+        }
+    }
+    function resetGame() { clearInterval(autoTimer); isAutoPlaying=false; tiles = generateTiles(); render(); }
+
+    /* --- MODALES --- */
+    function openShopModal(id, e) {
+        e.stopPropagation();
+        const t = tiles.find(x => x.id === id);
+        if(!t) return;
+        document.getElementById('m-title').innerText = t.title;
+        document.getElementById('m-img').src = t.img;
+        document.getElementById('m-desc').innerText = `Oportunidad única en ${t.cat}. Aprovechá el descuento: ${t.offer}.`;
+        document.getElementById('shop-modal').classList.add('active');
+    }
+    function openAdModal() { document.getElementById('ad-modal').classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function contactWA() { window.open('https://wa.me/543489000000', '_blank'); }
+
+    window.onclick = (e) => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); };
+
+    init();
+</script>
+</body>
+</html>
