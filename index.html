@@ -9,9 +9,9 @@
  
     <style>
         :root {
-            --meli-yellow: #ffe600;
-            --meli-blue: #2d3277;
-            --bg-body: #f5f5f5;
+            --arg-celeste: #75AADB; /* Celeste argentino */
+            --arg-white: #FFFFFF;
+            --bg-body: #FFFFFF; /* Fondo más blanco para emular la bandera */
             --bg-card: #ffffff;
             --text-primary: #333333;
             --color-low: #00a650;
@@ -32,7 +32,7 @@
             overflow-x: hidden;
         }
         header {
-            background-color: var(--meli-yellow);
+            background-color: var(--arg-celeste);
             padding: 12px 15px;
             position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -47,13 +47,13 @@
             gap: 12px;
         }
         .logo-img {
-            height: 90px;
-            width: 90px;
+            height: 80px;
+            width: auto;
         }
         .logo-text {
             font-weight: 900;
             font-size: 1.4rem;
-            color: var(--meli-blue);
+            color: var(--arg-white);
             line-height: 1;
             letter-spacing: -0.5px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -70,12 +70,12 @@
             text-align: center;
         }
         .location-badge {
-            display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--meli-blue);
+            display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--arg-white);
             font-size: 1.1rem;
         }
         .location-badge i { font-size: 1.3rem; }
         .search-container {
-            flex: 1; background: white; border-radius: 8px; min-width: 220px;
+            flex: 1; background: var(--arg-white); border-radius: 8px; min-width: 220px;
             display: flex; align-items: center; padding: 10px 16px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
@@ -84,12 +84,12 @@
             display: flex; align-items: center; gap: 10px;
         }
         .view-toggle-btn, .ig-btn {
-            background: white; border: none; width: 42px; height: 42px; border-radius: 50%;
-            color: var(--meli-blue); font-size: 1.2rem; cursor: pointer;
+            background: var(--arg-white); border: none; width: 42px; height: 42px; border-radius: 50%;
+            color: var(--arg-celeste); font-size: 1.2rem; cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
         }
         .ig-btn { color: #E4405F; font-size: 1.4rem; }
-        .tickers-stack { background: white; border-bottom: 1px solid #ddd; font-size: 0.75rem; }
+        .tickers-stack { background: var(--arg-white); border-bottom: 1px solid #ddd; font-size: 0.75rem; }
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; height: 28px; display: flex; align-items: center; }
         .ticker { display: inline-block; }
         .t-aviso .ticker { padding-left: 100%; animation: ticker-left 200s linear infinite; }
@@ -98,18 +98,18 @@
         .ticker-item { display: inline-block; padding: 0 3.5rem; font-weight: 600; text-transform: uppercase; }
         @keyframes ticker-left { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
         @keyframes ticker-right { 0% { transform: translateX(-100%); } 100% { transform: translateX(0); } }
-        .t-aviso { background: var(--meli-blue); color: white; }
+        .t-aviso { background: var(--arg-celeste); color: var(--arg-white); }
         .t-hot { background: #ffebeb; color: var(--color-hot); }
-        .t-delivery { background: var(--meli-yellow); color: var(--meli-blue); }
-        .filter-bar { overflow-x: auto; white-space: nowrap; padding: 8px 10px; background: white; display: flex; gap: 6px; align-items: center; }
+        .t-delivery { background: var(--arg-white); color: var(--arg-celeste); }
+        .filter-bar { overflow-x: auto; white-space: nowrap; padding: 8px 10px; background: var(--arg-white); display: flex; gap: 6px; align-items: center; }
         .btn-filter {
             background: #f0f0f0; border: none; padding: 6px 14px; border-radius: 20px;
             font-size: 0.8rem; font-weight: 600; color: #555; cursor: pointer; transition: 0.3s;
         }
-        .btn-filter.active { background: var(--meli-blue); color: white; }
-        .btn-filter.green-btn.active { background: var(--color-low); color: white; }
-        .btn-filter.yellow-btn.active { background: var(--color-mid); color: white; }
-        .btn-filter.red-btn.active { background: var(--color-hot); color: white; }
+        .btn-filter.active { background: var(--arg-celeste); color: var(--arg-white); }
+        .btn-filter.green-btn.active { background: var(--color-low); color: var(--arg-white); }
+        .btn-filter.yellow-btn.active { background: var(--color-mid); color: var(--arg-white); }
+        .btn-filter.red-btn.active { background: var(--color-hot); color: var(--arg-white); }
         .separator { width:1px; height: 20px; background:#ddd; margin:0 5px; }
         .board-container {
             flex: 1; position: relative; margin: 15px auto;
@@ -144,7 +144,7 @@
             height: 30%; padding: 8px;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            text-align: center; background: white;
+            text-align: center; background: var(--arg-white);
         }
         .tile-title {
             font-weight: 700;
@@ -182,34 +182,35 @@
         }
         .modal.active { opacity: 1; pointer-events: auto; }
         .gallery-container { width: 100%; max-width: 500px; margin: 0 auto; position: relative; }
-        .gallery-card { background: white; border-radius: 15px; overflow: hidden; margin: 20px; animation: slideUp 0.4s ease; }
+        .gallery-card { background: var(--arg-white); border-radius: 15px; overflow: hidden; margin: 20px; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from {transform: translateY(50px);} to {transform: translateY(0);} }
         .gallery-img { width: 100%; height: 350px; object-fit: cover; }
         .gallery-body { padding: 20px; text-align: center; }
         .btn-action { display: block; width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
-        .btn-wa { background: #25D366; color: white; }
-        .btn-url { background: var(--meli-blue); color: white; }
-        .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 6005; backdrop-filter: blur(5px); }
+        .btn-wa { background: #25D366; color: var(--arg-white); }
+        .btn-url { background: var(--arg-celeste); color: var(--arg-white); }
+        .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: var(--arg-white); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 6005; backdrop-filter: blur(5px); }
         .nav-prev { left: 10px; } .nav-next { right: 10px; }
-        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; z-index: 6005; }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--arg-white); font-size: 2rem; cursor: pointer; z-index: 6005; }
         .fab-pub {
             position: fixed; bottom: 20px; right: 20px;
-            background: var(--meli-blue); color: white;
+            background: var(--arg-celeste); color: var(--arg-white);
             padding: 15px 25px; border-radius: 50px; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(45, 50, 119, 0.4);
+            box-shadow: 0 4px 15px rgba(117, 170, 219, 0.4);
             cursor: pointer; z-index: 900; display: flex; align-items: center; gap: 10px;
         }
-        .form-modal-content { background: white; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; margin: auto; position: relative; }
+        .form-modal-content { background: var(--arg-white); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; margin: auto; position: relative; }
+        .form-modal-content h3 { color: var(--arg-celeste); }
         .form-input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; }
         footer {
-            background: white;
+            background: var(--arg-white);
             padding: 20px;
             text-align: center;
             font-size: 0.85rem;
             color: #555;
             border-top: 1px solid #eee;
         }
-        footer a { color: var(--meli-blue); text-decoration: none; }
+        footer a { color: var(--arg-celeste); text-decoration: none; }
         .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.5); transform: scale(0); animation: ripple-anim 0.6s linear; pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
     </style>
@@ -277,7 +278,7 @@
     </div>
     <footer>
         <p>Seguinos en <a href="https://www.instagram.com/mercadodelocales/" target="_blank"><i class="fab fa-instagram"></i> @mercadodelocales</a></p>
-        <p><button onclick="openPrivacyModal()" style="background:none;border:none;color:var(--meli-blue);text-decoration:underline;cursor:pointer;">Política de Privacidad y Responsabilidad</button></p>
+        <p><button onclick="openPrivacyModal()" style="background:none;border:none;color:var(--arg-celeste);text-decoration:underline;cursor:pointer;">Política de Privacidad y Responsabilidad</button></p>
         <p style="margin-top:10px;font-size:0.75rem;color:#999;">© 2026 Mercado de Locales - Campana</p>
     </footer>
     <div class="fab-pub" onclick="openFormModal()">
@@ -293,7 +294,7 @@
     </div>
     <div class="modal" id="form-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content">
-            <h3 style="text-align:center; color:var(--meli-blue); margin-bottom:15px;">Publicitar en Campana</h3>
+            <h3 style="text-align:center; color:var(--arg-celeste); margin-bottom:15px;">Publicitar en Campana</h3>
             <p style="text-align:center; font-size:0.8rem; color:#666; margin-bottom:15px;">
                 Sumate a las mejores ofertas de la zona.
             </p>
@@ -333,7 +334,7 @@
     <div class="modal" id="privacy-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content" style="max-height:90vh; overflow-y:auto;">
             <button onclick="closePrivacyModal()" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:2rem; cursor:pointer; color:#333;">&times;</button>
-            <h3 style="text-align:center; color:var(--meli-blue); padding:20px 20px 10px;">Política de Privacidad y Responsabilidad</h3>
+            <h3 style="text-align:center; color:var(--arg-celeste); padding:20px 20px 10px;">Política de Privacidad y Responsabilidad</h3>
             <div style="padding:0 20px 30px; line-height:1.6; font-size:0.9rem;">
                 <ol style="padding-left:20px;">
                     <li><strong>Introducción</strong><br>La presente Política de Privacidad y Responsabilidad establece los términos bajo los cuales "Mercado de Locales" opera y ofrece sus servicios de publicidad digital. Al utilizar nuestros servicios, el usuario acepta las condiciones aquí descritas.</li>
@@ -389,7 +390,7 @@
             generateMatrix();
             render();
 
-            // NUEVA FUNCIONALIDAD: Pausa aleatoria cada 7 segundos
+            // Pausa aleatoria cada 7 segundos
             setInterval(() => {
                 const bannerIds = ['tick-aviso', 'tick-hot', 'tick-delivery'];
                 const randomId = bannerIds[Math.floor(Math.random() * bannerIds.length)];
@@ -630,6 +631,7 @@
     </script>
 </body>
 </html>
+
 
 
 
