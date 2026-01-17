@@ -6,7 +6,6 @@
     <title>ArgenPlay | Campana</title>
     <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
- 
     <style>
         :root {
             --arg-celeste: #75AADB; /* Celeste argentino */
@@ -192,12 +191,20 @@
         .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: var(--arg-white); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 6005; backdrop-filter: blur(5px); }
         .nav-prev { left: 10px; } .nav-next { right: 10px; }
         .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--arg-white); font-size: 2rem; cursor: pointer; z-index: 6005; }
+        .fab-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 900;
+        }
         .fab-pub {
-            position: fixed; bottom: 20px; right: 20px;
             background: var(--arg-celeste); color: var(--arg-white);
             padding: 15px 25px; border-radius: 50px; font-weight: bold;
             box-shadow: 0 4px 15px rgba(117, 170, 219, 0.4);
-            cursor: pointer; z-index: 900; display: flex; align-items: center; gap: 10px;
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
         }
         .form-modal-content { background: var(--arg-white); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; margin: auto; position: relative; }
         .form-modal-content h3 { color: var(--arg-celeste); }
@@ -225,7 +232,7 @@
                     <span>Mercado de Locales en Campana</span>
                 </div>
             </div>
-         
+        
             <div class="segmentation-area">
                 <div class="location-badge">
                     <i class="fas fa-map-marker-alt"></i>
@@ -236,7 +243,7 @@
                 <input type="text" id="search-input" placeholder="Buscar carnicería, farmacia..." onkeyup="handleSearch(this.value)">
                 <i class="fas fa-search" style="color:#ccc;"></i>
             </div>
-         
+        
             <div class="right-buttons">
                 <button class="view-toggle-btn" onclick="toggleViewMode()">
                     <i class="fas fa-th-large" id="view-icon"></i>
@@ -281,9 +288,16 @@
         <p><button onclick="openPrivacyModal()" style="background:none;border:none;color:var(--arg-celeste);text-decoration:underline;cursor:pointer;">Política de Privacidad y Responsabilidad</button></p>
         <p style="margin-top:10px;font-size:0.75rem;color:#999;">© 2026 Mercado de Locales - Campana</p>
     </footer>
-    <div class="fab-pub" onclick="openFormModal()">
-        <i class="fas fa-bullhorn"></i> Publicitá
+
+    <div class="fab-container">
+        <div class="fab-pub" onclick="openFormModal()">
+            <i class="fas fa-bullhorn"></i> Publicitá Local
+        </div>
+        <div class="fab-pub" onclick="openDeliveryModal()">
+            <i class="fas fa-truck"></i> Publicar Delivery
+        </div>
     </div>
+
     <div class="modal" id="gallery-modal">
         <button class="close-modal" onclick="closeGallery()">&times;</button>
         <button class="nav-arrow nav-prev" onclick="navGallery(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -292,11 +306,13 @@
             <div class="gallery-card" id="gallery-card-content"></div>
         </div>
     </div>
+
+    <!-- Modal para publicitar local -->
     <div class="modal" id="form-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content">
-            <h3 style="text-align:center; color:var(--arg-celeste); margin-bottom:15px;">Publicitar en Campana</h3>
+            <h3 style="text-align:center; color:var(--arg-celeste); margin-bottom:15px;">Publicitar Local en Campana</h3>
             <p style="text-align:center; font-size:0.8rem; color:#666; margin-bottom:15px;">
-                Sumate a las mejores ofertas de la zona.
+                Sumate con tu local a las mejores ofertas de la zona.
             </p>
             <form onsubmit="sendWhatsappForm(event)">
                 <input type="text" id="frm-nombre" class="form-input" placeholder="Nombre del Local" required>
@@ -319,18 +335,37 @@
                     <option value="Otro">Otro</option>
                 </select>
                 <input type="text" id="frm-ubicacion" class="form-input" placeholder="Dirección en Campana" required>
-                <select id="frm-delivery" class="form-input">
-                    <option value="" selected>Delivery (opcional)</option>
-                    <option value="Moto">Moto</option>
-                    <option value="Auto">Auto</option>
-                    <option value="Camioneta">Camioneta</option>
-                </select>
                 <input type="email" id="frm-email" class="form-input" placeholder="E-mail (opcional)">
                 <button type="submit" class="btn-action btn-wa" style="margin-top:15px;">Enviar Solicitud 🚀</button>
             </form>
             <button class="btn-action" style="background:transparent; color:#666;" onclick="closeFormModal()">Cancelar</button>
         </div>
     </div>
+
+    <!-- Modal para registrar delivery -->
+    <div class="modal" id="delivery-modal" style="background:rgba(0,0,0,0.8);">
+        <div class="form-modal-content">
+            <h3 style="text-align:center; color:var(--arg-celeste); margin-bottom:15px;">Publicar como Delivery en Campana</h3>
+            <p style="text-align:center; font-size:0.8rem; color:#666; margin-bottom:15px;">
+                Registrate para ofrecer tus servicios de delivery en la zona.
+            </p>
+            <form onsubmit="sendDeliveryWhatsappForm(event)">
+                <input type="text" id="del-nombre" class="form-input" placeholder="Tu Nombre" required>
+                <select id="del-vehiculo" class="form-input" required>
+                    <option value="" disabled selected>Seleccioná Tipo de Vehículo</option>
+                    <option value="Moto">Moto</option>
+                    <option value="Auto">Auto</option>
+                    <option value="Camioneta">Camioneta</option>
+                </select>
+                <input type="text" id="del-direccion" class="form-input" placeholder="Dirección en Campana" required>
+                <input type="text" id="del-dni" class="form-input" placeholder="DNI" required>
+                <input type="email" id="del-email" class="form-input" placeholder="E-mail (opcional)">
+                <button type="submit" class="btn-action btn-wa" style="margin-top:15px;">Enviar Solicitud 🚀</button>
+            </form>
+            <button class="btn-action" style="background:transparent; color:#666;" onclick="closeDeliveryModal()">Cancelar</button>
+        </div>
+    </div>
+
     <div class="modal" id="privacy-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content" style="max-height:90vh; overflow-y:auto;">
             <button onclick="closePrivacyModal()" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:2rem; cursor:pointer; color:#333;">&times;</button>
@@ -344,10 +379,12 @@
                     <li><strong>Obligaciones del Usuario</strong><ul style="padding-left:20px; margin:10px 0;"><li>El usuario se compromete a utilizar la plataforma de manera lícita y respetuosa.</li><li>Es responsabilidad del usuario verificar la autenticidad y condiciones de cualquier oferta publicada.</li><li>El usuario exonera a la plataforma de cualquier reclamo derivado de sus interacciones con terceros.</li></ul></li>
                     <li><strong>Modificaciones</strong><br>La plataforma se reserva el derecho de modificar esta política en cualquier momento. Las actualizaciones serán publicadas en nuestro sitio web y entrarán en vigor inmediatamente después de su publicación.</li>
                     <li><strong>Contacto</strong><br>Para consultas relacionadas con esta política, los usuarios pueden comunicarse con nosotros a través de <a href="mailto:mercadodelocales@gmail.com">mercadodelocales@gmail.com</a>.</li>
+                    <li><strong>Responsabilidad en Servicios de Delivery</strong><br>La plataforma ArgenPlay no se responsabiliza de acciones y transacciones comerciales entre particulares y servicios de delivery.</li>
                 </ol>
             </div>
         </div>
     </div>
+
     <script>
         const DESKTOP_COLS = 14;
         const MOBILE_COLS = 4;
@@ -383,16 +420,14 @@
             { name: "Sala de Juegos Fun", cat: "ENTRETENIMIENTO", discount: 45, img: "https://images.unsplash.com/photo-1549924230-c5b32a11e3d3?w=400", location: "Shopping Campana", url: "https://instagram.com/saladejuegosfun", whatsapp: "543489223344", hours: { days: "Lun-Dom", from: "10:00", to: "22:00", sundayClosed: false } },
             { name: "Lavandería Express", cat: "SERVICIOS", discount: 30, img: "https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400", location: "Av. Principal 999, Campana", url: "https://instagram.com/lavanderiaexpress", whatsapp: "543489123456", hours: { days: "Lun-Sáb", from: "08:00", to: "19:00", sundayClosed: true } },
             { name: "Peluquería Style", cat: "SERVICIOS", discount: 25, img: "https://images.unsplash.com/photo-1562322140-8baeececf3e2?w=400", location: "Centro, Campana", url: "https://instagram.com/peluqueriastyle", whatsapp: "543489654321", hours: { days: "Lun-Sáb", from: "09:00", to: "20:00", sundayClosed: true } },
-           { name: "Todo Casero", cat: "COMIDA", discount: 10, img: "logo.jpeg", location: "Campana", url: "https://nexoar-art.github.io/ROTISERIA-MALVINAS/", whatsapp: "543489686939", hours: { days: "Lun-Dom", from: "20:00", to: "23:50", sundayClosed: true } },
-             { name: "NEXO-Art Paginas Web", cat: "SERVICIOS", discount: 10, img: "NEXO-ART.png", location: " Campana", url: "https://nexoar-art.github.io/NEXO-art/", whatsapp: "543489123456", hours: { days: "Lun-Sáb", from: "08:00", to: "19:00", sundayClosed: true } }
+            { name: "Todo Casero", cat: "COMIDA", discount: 10, img: "logo.jpeg", location: "Campana", url: "https://nexoar-art.github.io/ROTISERIA-MALVINAS/", whatsapp: "543489686939", hours: { days: "Lun-Dom", from: "20:00", to: "23:50", sundayClosed: true } },
+            { name: "NEXO-Art Paginas Web", cat: "SERVICIOS", discount: 10, img: "NEXO-ART.png", location: " Campana", url: "https://nexoar-art.github.io/NEXO-art/", whatsapp: "543489123456", hours: { days: "Lun-Sáb", from: "08:00", to: "19:00", sundayClosed: true } }
         ];
         let activeFilters = { cat: null, discount: null, search: '' };
         function init() {
             setTickers();
             generateMatrix();
             render();
-
-            // Pausa aleatoria cada 7 segundos
             setInterval(() => {
                 const bannerIds = ['tick-aviso', 'tick-hot', 'tick-delivery'];
                 const randomId = bannerIds[Math.floor(Math.random() * bannerIds.length)];
@@ -416,13 +451,12 @@
             let avisoHTML = '';
             noticias.forEach(n => avisoHTML += `<span class="ticker-item">${n}</span>`);
             document.getElementById('tick-aviso').innerHTML = avisoHTML.repeat(20);
-            
+           
             let hotHTML = '';
             baseData.forEach(local => {
                 hotHTML += `<span class="ticker-item">${local.name.toUpperCase()} - ${local.discount}% OFF</span>`;
             });
             document.getElementById('tick-hot').innerHTML = hotHTML.repeat(15);
-
             const deliveryNoticias = [
                 "¡DELIVERY POR CABIFY, UBER, PEDIDOS YA !",
                 "DELIVERY PARTICULAR",
@@ -477,7 +511,7 @@
             const board = document.getElementById('puzzle-board');
             board.innerHTML = '';
             displayedTiles = tiles.filter(t => checkFilter(t));
-         
+        
             if(viewMode === 'matrix') {
                 const boardWidth = board.parentElement.clientWidth;
                 const cellSize = (boardWidth - (GAP * (COLS - 1))) / COLS;
@@ -600,15 +634,25 @@
             const n = document.getElementById('frm-nombre').value.trim();
             const r = document.getElementById('frm-rubro').value;
             const u = document.getElementById('frm-ubicacion').value.trim();
-            const d = document.getElementById('frm-delivery').value;
             const em = document.getElementById('frm-email').value.trim();
-
             let text = `Hola! Quiero publicitar mi ${r}: ${n} ubicado en ${u}`;
-            if (d) text += ` con delivery en ${d}`;
             if (em) text += ` - Email de contacto: ${em}`;
-
             window.open(`https://api.whatsapp.com/send?phone=+543489686939&text=${encodeURIComponent(text)}`, '_blank');
             closeFormModal();
+        }
+        function openDeliveryModal() { document.getElementById('delivery-modal').classList.add('active'); }
+        function closeDeliveryModal() { document.getElementById('delivery-modal').classList.remove('active'); }
+        function sendDeliveryWhatsappForm(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('del-nombre').value.trim();
+            const vehiculo = document.getElementById('del-vehiculo').value;
+            const direccion = document.getElementById('del-direccion').value.trim();
+            const dni = document.getElementById('del-dni').value.trim();
+            const email = document.getElementById('del-email').value.trim();
+            let text = `Hola! Quiero registrarme como Delivery.\nNombre: ${nombre}\nVehículo: ${vehiculo}\nDirección: ${direccion}\nDNI: ${dni}`;
+            if (email) text += `\nEmail: ${email}`;
+            window.open(`https://api.whatsapp.com/send?phone=+543489686939&text=${encodeURIComponent(text)}`, '_blank');
+            closeDeliveryModal();
         }
         function openPrivacyModal() { document.getElementById('privacy-modal').classList.add('active'); }
         function closePrivacyModal() { document.getElementById('privacy-modal').classList.remove('active'); }
@@ -633,6 +677,7 @@
     </script>
 </body>
 </html>
+
 
 
 
