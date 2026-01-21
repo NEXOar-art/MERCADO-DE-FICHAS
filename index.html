@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ArgentPlay.online | Mercado de Locales</title>
+    <title>ArgentPlay.online Mercado De Locales</title>
     <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --arg-celeste: #75AADB; /* Celeste argentino */
+            --arg-celeste: #75AADB;
             --arg-white: #FFFFFF;
-            --bg-body: #FFFFFF; /* Fondo más blanco para emular la bandera */
+            --bg-body: #FFFFFF;
             --bg-card: #ffffff;
             --text-primary: #333333;
             --color-low: #00a650;
@@ -46,8 +46,8 @@
             gap: 12px;
         }
         .logo-img {
-            height: 115px;
-            width: 90px;
+            height: 90px;
+            width: 80px;
         }
         .logo-text {
             font-weight: 900;
@@ -82,12 +82,13 @@
         .right-buttons {
             display: flex; align-items: center; gap: 10px;
         }
-        .view-toggle-btn, .ig-btn {
+        .view-toggle-btn, .ig-btn, .share-btn {
             background: var(--arg-white); border: none; width: 42px; height: 42px; border-radius: 50%;
             color: var(--arg-celeste); font-size: 1.2rem; cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
         }
         .ig-btn { color: #E4405F; font-size: 1.4rem; }
+        .share-btn { color: var(--arg-celeste); }
         .tickers-stack { background: var(--arg-white); border-bottom: 1px solid #ddd; font-size: 0.75rem; }
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; height: 28px; display: flex; align-items: center; }
         .ticker { display: inline-block; }
@@ -113,7 +114,7 @@
         .board-container {
             flex: 1; position: relative; margin: 15px auto;
             width: 98%; max-width: 1800px; padding-bottom: 80px;
-            overflow: hidden; /* Evita que el zoom desplace el layout */
+            overflow: hidden;
         }
         #puzzle-board { position: relative; width: 100%; transition: height 0.3s; overflow: visible; }
         .tile {
@@ -125,7 +126,7 @@
             transform-origin: center center;
         }
         .view-matrix .tile:hover {
-            transform: scale(2) !important; /* Reducido de 3 a 2 para menos movimiento */
+            transform: scale(2) !important;
             z-index: 5000 !important;
             box-shadow: var(--shadow-hover);
             border: 1px solid #ccc;
@@ -220,19 +221,35 @@
         footer a { color: var(--arg-celeste); text-decoration: none; }
         .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.5); transform: scale(0); animation: ripple-anim 0.6s linear; pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+        .share-modal-content {
+            text-align: center;
+            padding: 20px;
+        }
+        .share-modal-content img {
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .share-modal-content p {
+            color: var(--arg-white);
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="view-matrix">
     <header>
         <div class="header-content">
             <div class="logo-area">
-                <img class="logo-img" src="mercado de locales.png" alt="ArgenPlay.online">
+                <img class="logo-img" src="mercado de locales.png" alt="ArgentPlay.online">
                 <div class="logo-text">
                     ArgentPlay.online
-                    <span>Mercado de Locales</span>
+                    <span>Mercado De Locales</span>
                 </div>
             </div>
-        
+       
             <div class="segmentation-area">
                 <div class="location-badge">
                     <i class="fas fa-map-marker-alt"></i>
@@ -243,10 +260,13 @@
                 <input type="text" id="search-input" placeholder="Buscar carnicería, farmacia..." onkeyup="handleSearch(this.value)">
                 <i class="fas fa-search" style="color:#ccc;"></i>
             </div>
-        
+       
             <div class="right-buttons">
                 <button class="view-toggle-btn" onclick="toggleViewMode()">
                     <i class="fas fa-th-large" id="view-icon"></i>
+                </button>
+                <button class="share-btn" onclick="openShareModal()">
+                    <i class="fas fa-share-alt"></i>
                 </button>
                 <a href="https://www.instagram.com/mercadodelocales/" target="_blank" class="ig-btn">
                     <i class="fab fa-instagram"></i>
@@ -276,6 +296,9 @@
         <button class="btn-filter" onclick="filter('cat', 'ENTRETENIMIENTO', this)">🎉 Entretenimiento</button>
         <button class="btn-filter" onclick="filter('cat', 'SERVICIOS', this)">🔧 Servicios</button>
         <button class="btn-filter" onclick="filter('cat', 'PAPELERIA', this)">📄 Papelería</button>
+        <button class="btn-filter" onclick="filter('cat', 'PELUQUERIA', this)">✂️ Peluquerías y Barberías</button>
+        <button class="btn-filter" onclick="filter('cat', 'CORRALON', this)">🏗️ Corralón</button>
+        <button class="btn-filter" onclick="filter('cat', 'LAVADERO_AUTOS', this)">🚗 Lavadero de Autos</button>
         <div class="separator"></div>
         <button class="btn-filter green-btn" onclick="filter('discount', 'green', this)">🟢 < 20%</button>
         <button class="btn-filter yellow-btn" onclick="filter('discount', 'yellow', this)">🟡 20-40%</button>
@@ -289,7 +312,6 @@
         <p><button onclick="openPrivacyModal()" style="background:none;border:none;color:var(--arg-celeste);text-decoration:underline;cursor:pointer;">Política de Privacidad y Responsabilidad</button></p>
         <p style="margin-top:10px;font-size:0.75rem;color:#999;">© 2026 Mercado de Locales - Campana</p>
     </footer>
-
     <div class="fab-container">
         <div class="fab-pub" onclick="openFormModal()">
             <i class="fas fa-bullhorn"></i> Publicita tu Local
@@ -298,7 +320,14 @@
             <i class="fas fa-truck"></i> Publicar Delivery
         </div>
     </div>
-
+    <!-- Modal de compartir (QR) -->
+    <div class="modal" id="share-modal">
+        <button class="close-modal" onclick="closeShareModal()">&times;</button>
+        <div class="share-modal-content">
+            <img src="MERCADO DE LOCALES QR.png" alt="QR Code ArgentPlay.online">
+            <p>¡Escaneá y compartí ArgentPlay.online con tus amigos!</p>
+        </div>
+    </div>
     <div class="modal" id="gallery-modal">
         <button class="close-modal" onclick="closeGallery()">&times;</button>
         <button class="nav-arrow nav-prev" onclick="navGallery(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -307,7 +336,6 @@
             <div class="gallery-card" id="gallery-card-content"></div>
         </div>
     </div>
-
     <!-- Modal para publicitar local -->
     <div class="modal" id="form-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content">
@@ -334,6 +362,9 @@
                     <option value="Entretenimiento">Entretenimiento</option>
                     <option value="Servicios">Servicios</option>
                     <option value="Papelería">Papelería</option>
+                    <option value="Peluquería y Barbería">Peluquería y Barbería</option>
+                    <option value="Corralón">Corralón</option>
+                    <option value="Lavadero de Autos">Lavadero de Autos</option>
                     <option value="Otro">Otro</option>
                 </select>
                 <input type="text" id="frm-ubicacion" class="form-input" placeholder="Dirección en Campana" required>
@@ -343,7 +374,6 @@
             <button class="btn-action" style="background:transparent; color:#666;" onclick="closeFormModal()">Cancelar</button>
         </div>
     </div>
-
     <!-- Modal para registrar delivery -->
     <div class="modal" id="delivery-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content">
@@ -367,7 +397,6 @@
             <button class="btn-action" style="background:transparent; color:#666;" onclick="closeDeliveryModal()">Cancelar</button>
         </div>
     </div>
-
     <div class="modal" id="privacy-modal" style="background:rgba(0,0,0,0.8);">
         <div class="form-modal-content" style="max-height:90vh; overflow-y:auto;">
             <button onclick="closePrivacyModal()" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:2rem; cursor:pointer; color:#333;">&times;</button>
@@ -386,7 +415,6 @@
             </div>
         </div>
     </div>
-
     <script>
         const DESKTOP_COLS = 14;
         const MOBILE_COLS = 4;
@@ -438,9 +466,9 @@
                     ticker.style.animationPlayState = 'paused';
                     setTimeout(() => {
                         ticker.style.animationPlayState = 'running';
-                    }, 4000);
+                    }, 8000); // 8 segundos de pausa
                 }
-            }, 7000);
+            }, 12000); // cada 12 segundos se elige un ticker al azar para pausar
         }
         function setTickers() {
             const noticias = [
@@ -453,7 +481,7 @@
             let avisoHTML = '';
             noticias.forEach(n => avisoHTML += `<span class="ticker-item">${n}</span>`);
             document.getElementById('tick-aviso').innerHTML = avisoHTML.repeat(20);
-           
+          
             let hotHTML = '';
             baseData.forEach(local => {
                 hotHTML += `<span class="ticker-item">${local.name.toUpperCase()} - ${local.discount}% OFF</span>`;
@@ -513,7 +541,7 @@
             const board = document.getElementById('puzzle-board');
             board.innerHTML = '';
             displayedTiles = tiles.filter(t => checkFilter(t));
-        
+       
             if(viewMode === 'matrix') {
                 const boardWidth = board.parentElement.clientWidth;
                 const cellSize = (boardWidth - (GAP * (COLS - 1))) / COLS;
@@ -662,6 +690,8 @@
         }
         function openPrivacyModal() { document.getElementById('privacy-modal').classList.add('active'); }
         function closePrivacyModal() { document.getElementById('privacy-modal').classList.remove('active'); }
+        function openShareModal() { document.getElementById('share-modal').classList.add('active'); }
+        function closeShareModal() { document.getElementById('share-modal').classList.remove('active'); }
         setInterval(() => {
             if(viewMode === 'list' || activeFilters.cat || activeFilters.discount || activeFilters.search) return;
             const idx1 = Math.floor(Math.random() * displayedTiles.length);
@@ -683,6 +713,7 @@
     </script>
 </body>
 </html>
+
 
 
 
